@@ -9,91 +9,126 @@ app.use(express.json());
 
 const PORT = process.env.PORT || 3000;
 
-// ===============================
-// Accueil
-// ===============================
+// =======================================
+// Informations de l'application
+// =======================================
 app.get("/", (req, res) => {
-  res.json({
-    success: true,
-    app: "SOCOETRAP",
-    network: "Pi Testnet",
-    status: "Online",
-    version: "1.0.0"
-  });
+    res.json({
+        success: true,
+        app: "SOCOETRAP",
+        network: "Pi Testnet",
+        version: "1.0.0",
+        status: "online"
+    });
 });
 
-// ===============================
+// =======================================
 // Health Check
-// ===============================
+// =======================================
 app.get("/health", (req, res) => {
-  res.status(200).json({
-    status: "ok"
-  });
+    res.json({
+        status: "ok"
+    });
 });
 
-// ===============================
-// Test Backend
-// ===============================
+// =======================================
+// Test
+// =======================================
 app.get("/test", (req, res) => {
-  res.json({
-    success: true,
-    message: "SOCOETRAP Pi Backend fonctionne correctement"
-  });
+    res.json({
+        success: true,
+        message: "SOCOETRAP Backend fonctionne correctement"
+    });
 });
 
-// ===============================
-// Paiements Pi
-// (À compléter avec les appels
-// officiels de l'API Pi)
-// ===============================
-
+// =======================================
 // Créer un paiement
+// Le paiement est créé côté SDK Pi.
+// Cette route prépare simplement les données.
+// =======================================
 app.post("/payments/create", async (req, res) => {
-  console.log("POST /payments/create");
-  console.log(req.body);
 
-  res.json({
-    success: true,
-    message: "Route create prête."
-  });
+    try {
+
+        const { amount, memo, metadata } = req.body;
+
+        if (!amount || !memo) {
+
+            return res.status(400).json({
+                success: false,
+                message: "amount et memo sont obligatoires."
+            });
+
+        }
+
+        return res.json({
+            success: true,
+            payment: {
+                amount,
+                memo,
+                metadata: metadata || {}
+            }
+        });
+
+    } catch (error) {
+
+        console.error(error);
+
+        return res.status(500).json({
+            success: false,
+            message: error.message
+        });
+
+    }
+
 });
 
-// Approuver un paiement
+// =======================================
+// Approbation
+// (sera connecté à l'API Pi)
+// =======================================
 app.post("/payments/approve", async (req, res) => {
-  console.log("POST /payments/approve");
-  console.log(req.body);
 
-  res.json({
-    success: true,
-    message: "Route approve prête."
-  });
+    return res.json({
+        success: true,
+        message: "Route approve prête."
+    });
+
 });
 
-// Finaliser un paiement
+// =======================================
+// Finalisation
+// (sera connecté à l'API Pi)
+// =======================================
 app.post("/payments/complete", async (req, res) => {
-  console.log("POST /payments/complete");
-  console.log(req.body);
 
-  res.json({
-    success: true,
-    message: "Route complete prête."
-  });
+    return res.json({
+        success: true,
+        message: "Route complete prête."
+    });
+
 });
 
-// Annuler un paiement
+// =======================================
+// Annulation
+// =======================================
 app.post("/payments/cancel", async (req, res) => {
-  console.log("POST /payments/cancel");
-  console.log(req.body);
 
-  res.json({
-    success: true,
-    message: "Route cancel prête."
-  });
+    return res.json({
+        success: true,
+        message: "Paiement annulé."
+    });
+
 });
 
-// ===============================
-// Démarrage du serveur
-// ===============================
+// =======================================
+// Lancement
+// =======================================
 app.listen(PORT, () => {
-  console.log(`🚀 SOCOETRAP Backend démarré sur le port ${PORT}`);
+
+    console.log("==================================");
+    console.log("SOCOETRAP Backend");
+    console.log("Port :", PORT);
+    console.log("==================================");
+
 });
